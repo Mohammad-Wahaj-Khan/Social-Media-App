@@ -1,184 +1,116 @@
-var loginUser;
 var listParent = document.getElementById("listParent")
-
+var loginUser;
 
 window.addEventListener("load", function () {
 
-    if(listParent){
-        var getPost = JSON.parse(localStorage.getItem("posts"))
-        for(var value of getPost){
-            listParent.innerHTML += `<div class="card mx-auto my-3" style="width: 48rem;">
-            <div class="card-body">
-          <h5 class="card-title">${value.title}</h5>
-          <p class="card-text">${value.description}</p>
-            <button class="btn btn-secondary ">Edit Post</button>
-            <button class="btn btn-info">Delete Post</button>
-        </div>
-      </div>`
-        }
-    }
-
-    
-})
-function signup() {
-    var fullName = document.getElementById("fullName").value
-    var phoneNumber = document.getElementById("phoneNumber").value
-    var email = document.getElementById("email").value
-    var password = document.getElementById("password").value
-
-    var object = {
-        fullName,
-        phoneNumber,
-        email,
-        password,
-    }
-
-    var getUsers = JSON.parse(localStorage.getItem("users"))
-    if (getUsers === null) {
-
-        var arr = []
-        arr.push(object)
-        console.log("first user signup")
-        localStorage.setItem("users", JSON.stringify(arr))
-        alert("User Signup Successfully")
-        window.location.href = "./index.html"
-    } else {
-        console.log(getUsers)
-        var findUser = getUsers.find(function (value) {
-            console.log(value.email, "value")
-            if (value.email === email) {
-                return true
-            }
-        })
-
-        if (findUser === undefined) {
-            getUsers.push(object)
-            localStorage.setItem("users", JSON.stringify(getUsers))
-            alert("user signup")
-            window.location.href = "./index.html"
-        } else {
-            alert("EMAIL ADDRESS ALREADY EXISTS")
-        }
-    }
-}
-
-
-function login(){
-    var email = document.getElementById("email").value
-    var password = document.getElementById("password").value
-
-    console.log(email)
-    console.log(password)
-
-    var getUSER = JSON.parse(localStorage.getItem("users"))
-
-    var userIndex = getUSER.findIndex(function(value){
-        if(value.email === email && value.password === password) return true
-    })
-
-    if(userIndex !== -1){
-        alert("SUCCESSFULLY LOGIN") 
-        window.location.replace("./lobby.html")
-    }
-    else{
-        alert("Email or Password Doesn't Match ")
-    }
-
-    console.log(userIndex)
-}
-
-function addPost(){
-
-    var title = document.getElementById("title")
-    var description = document.getElementById("description")
-
-    if(!title.value || !description.value){
-        alert("Please Enter Values")
+    var userLogin = localStorage.getItem("loginUser")
+    if (!userLogin) {
+        window.location.replace("./index.html")
         return
     }
 
+    if (listParent) {
+        var getPosts = JSON.parse(localStorage.getItem("posts")) || []
+        console.log(getPosts, "getPosts")
+        for (var value of getPosts) {
+            listParent.innerHTML += `<div class="card mx-auto" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">${value.title}</h5>
+                <p class="card-text">${value.desc}</p>
+                <button class="btn btn-secondary" onclick="editPost(${value.id} , this)" >EDIT</button>
+                <button class="btn btn-info" onclick="deletePost(${value.id} , this)" >DELETE</button>
+            </div>
+        </div>`
+        }
 
-    var socialApp = `<div class="card mx-auto my-3" style="width: 48rem;">
-        <div class="card-body">
-      <h5 class="card-title">${title.value}</h5>
-      <p class="card-text">${description.value}</p>
-        <button class="btn btn-secondary ">Edit Post</button>
-        <button class="btn btn-info">Delete Post</button>
+    }
+
+})
+
+function addPost() {
+    console.log("addPost")
+    var title = document.getElementById("title")
+    var desc = document.getElementById("desc")
+
+
+    if (!title.value || !desc.value) {
+        alert("Please enter values")
+        return
+    }
+
+    var id;
+    var getPosts = JSON.parse(localStorage.getItem("posts")) || []
+    console.log(getPosts)
+
+    if (getPosts.length > 0) {
+        id = getPosts[0].id + 1
+    } else {
+        id = 1
+    }
+
+
+    var socialApp = `<div class="card mx-auto" style="width: 18rem;">
+    <div class="card-body">
+        <h5 class="card-title">${title.value}</h5>
+        <p class="card-text">${desc.value}</p>
+        <button class="btn btn-secondary" onclick="editPost(${id} , this)" >EDIT</button>
+        <button class="btn btn-info" onclick="deletePost(${id} , this)" >DELETE</button>
     </div>
-  </div>`
+</div>`
+    listParent.innerHTML = socialApp + listParent.innerHTML
 
-  console.log(socialApp)
-    listParent.innerHTML += socialApp
-
-    var postObject = {
-        title : title.value,
-        description : description.value
-    }
-    var getPost = JSON.parse(localStorage.getItem("posts"))
-    if(getPost == null){
-        var array = []
-        array.push(postObject)
-        localStorage.setItem("posts", JSON.stringify(array))
-    }
-    else{
-        getPost.unshift(postObject)
-        localStorage.setItem("posts", JSON.stringify(getPost))
+    var postObj = {
+        id: id,
+        title: title.value,
+        desc: desc.value
     }
 
+    getPosts.unshift(postObj)
+    localStorage.setItem("posts", JSON.stringify(getPosts))
     title.value = ""
-    description.value = ""
+    desc.value = ""
+}
+
+function deletePost(id, element) {
+    var getPosts = JSON.parse(localStorage.getItem("posts"))
+    var indexNum = getPosts.findIndex(function (value) {
+        if (value.id === id) return true
+    })
+    getPosts.splice(indexNum, 1)
+    localStorage.setItem("posts", JSON.stringify(getPosts))
+
+    element.parentNode.parentNode.remove()
+}
+
+function editPost(id, element) {
+    var indexNum;
+    var getPosts = JSON.parse(localStorage.getItem("posts"))
+    var post = getPosts.find(function (value, index) {
+        if (value.id === id) {
+            indexNum = index
+            return true
+        }
+    })
+    var editTitle = prompt("Edit Title", post.title)
+    var editDescription = prompt("Edit Description", post.desc)
+    const editObj = {
+        id: post.id,
+        title: editTitle,
+        desc: editDescription
+    }
+    getPosts.splice(indexNum, 1, editObj)
+    localStorage.setItem("posts", JSON.stringify(getPosts))
+
+    var h5Title = element.parentNode.firstElementChild
+    var pDescription = element.parentNode.firstElementChild.nextElementSibling
+    h5Title.innerHTML = editTitle
+    pDescription.innerHTML = editDescription
+
+
 }
 
 
-
-//   long Way
-   /* // var cardDiv = document.createElement("div")
-    // cardDiv.classList.add("card")
-
-
-    // var cardBodyDiv = document.createElement("div")
-    // cardBodyDiv.classList.add("card-body")
-
-    // var cardTitle = document.createElement("h5")
-    // cardTitle.classList.add("card-title")
-    // cardTitle.innerHTML = title.value
-    // cardBodyDiv.append(cardTitle)
-
-    // var cardText = document.createElement("p")
-    // cardText.classList.add("card-text")
-    // cardText.innerHTML = description.value
-    // cardBodyDiv.append(cardText)
-
-
-    // // var editBtn = document.createElement("button")
-    // // editBtn.innerHTML = "EDIT"
-    // // cardBodyDiv.append(editBtn)
-    // // editBtn.classList.add("btn", "btn-secondary")
-
-    // // console.log(cardBodyDiv)
-    // // console.log(cardDiv )
-    // // console.log(cardText )
-    // // console.log(cardTitle)
-
-    // cardDiv.append(cardBodyDiv)
-
-    // listParent.append(cardDiv)
-    
-    // console.log(cardBodyDiv) */
-
-
-    /* // ES6 topic
-
-    // long way 
-
-    // var a = "Wahaj"
-    // var b = "Khan"
-    // var c = "My name is" + " " + a + " " + b
-    // console.log(c)
-
-    // short Way
-
-    // var a = "Wahaj"
-    // var b = "khan"
-    // var c = `My name is ${a} ${b}`
-    // console.log(c) */
+function logout() {
+    localStorage.removeItem("loginUser")
+    window.location.replace("./index.html")
+}

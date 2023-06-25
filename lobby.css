@@ -6,6 +6,16 @@
 
 .header{
     margin-top: -19%;
+    background-color: red;
+}
+.heading{
+    text-shadow: 6px 6px 6px grey;
+}
+.heading::first-letter{
+    color: yellow;
+}
+.heading::first-line{
+    color: white;
 }
 
 body{

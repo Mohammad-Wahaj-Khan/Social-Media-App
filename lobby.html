@@ -34,7 +34,7 @@
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link disabled">Disabled</a>
+                <a class="nav-link" onclick="logout()">Log out</a>
               </li>
             </ul>
             <form class="d-flex" role="search">
@@ -45,12 +45,12 @@
         </div>
       </nav><br><br><br><br><br><br><br><br><br><br>
 
-      <header class="bg-danger header p-3 text-center">
-        <h1 class="text-white">Social Media App</h1>
+      <header class=" header p-3 text-center">
+        <h1 class="text-white heading">Social Media App</h1>
     </header>
     <div class="MainSection">
       <input type="text" id="title" placeholder="Enter Post Title....." class="form-control mx-auto w-50 mt-5 p-3">
-      <textarea placeholder="Description..." type="text" id="description" class="mx-auto w-50 mt-3 p-3  form-control "></textarea>
+      <textarea placeholder="Description..." type="text" id="desc" class="mx-auto w-50 mt-3 p-3  form-control "></textarea>
       <button onclick="addPost()" class="buttonMain p-2 mt-4" > ADD POST </button>
 
     </div>
@@ -58,7 +58,7 @@
 
 
   <section id="listParent">
-    <!-- <div class="card mx-auto" style="width: 18rem;">
+    <!-- <div class="card mx-auto"  style="width: 18rem;">
       <div class="card-body">
         <h5 class="card-title">Card title</h5>
         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
